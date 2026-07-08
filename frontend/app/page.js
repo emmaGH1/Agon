@@ -2,15 +2,15 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Trophy, 
-  Clock, 
-  Activity, 
-  Flame, 
-  ExternalLink, 
-  Cpu, 
-  ShieldAlert, 
-  Coins, 
+import {
+  Trophy,
+  Clock,
+  Activity,
+  Flame,
+  ExternalLink,
+  Cpu,
+  ShieldAlert,
+  Coins,
   Database,
   RefreshCw,
   Compass,
@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 
 // API endpoints pointing to localhost Express backend
-const API_BASE = "http://localhost:3001/api";
+const API_BASE = process.env.API_BASE;
 const BOHR_RPC = "https://rpc.bohr.life";
 const BOHR_EXPLORER = "https://scan.bohr.life";
 
@@ -199,7 +199,7 @@ export default function Dashboard() {
 
   const formatEthValue = (weiStr) => {
     if (!weiStr) return "0.00";
-    const val = Number(weiStr) / 10**18;
+    const val = Number(weiStr) / 10 ** 18;
     return val.toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 6 });
   };
 
@@ -222,7 +222,7 @@ export default function Dashboard() {
   const settledAuctions = auctions.filter(a => a.settled).sort((a, b) => b.id - a.id);
 
   // Spotlight active auction is the one expiring soonest
-  const spotlightAuction = activeAuctions.length > 0 
+  const spotlightAuction = activeAuctions.length > 0
     ? [...activeAuctions].sort((a, b) => (a.endBlock - currentBlock) - (b.endBlock - currentBlock))[0]
     : null;
 
@@ -233,7 +233,7 @@ export default function Dashboard() {
     if (agentName === "CreatorBot") {
       return { text: "ORCHESTRATING", color: "text-[#c5a059] border-[#c5a059]/20 bg-[#c5a059]/5 animate-pulse" };
     }
-    
+
     // Check if leading any active auction
     const isLeading = activeAuctions.some(a => a.highestBidder.toLowerCase() === getAgentAddress(agentName).toLowerCase() && a.hasBids);
     if (isLeading) {
@@ -257,21 +257,20 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-[#09090b] text-[#ececed] font-sans antialiased selection:bg-[#c5a059] selection:text-black">
-      
+
       {/* 1. STICKY GLASSMORPHIC NAVBAR (Transitions on scroll) */}
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled 
-          ? "bg-[#09090b]/85 backdrop-blur-md border-b border-zinc-800/80 py-3 shadow-lg" 
+      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
+          ? "bg-[#09090b]/85 backdrop-blur-md border-b border-zinc-800/80 py-3 shadow-lg"
           : "bg-transparent border-b border-transparent py-5"
-      }`}>
+        }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center relative">
-          
+
           {/* Logo & Brand (Using transparent logo-arch.png next to AGON) */}
           <a href="#" className="flex items-center gap-3 group">
             <div className="h-9 w-9 overflow-hidden flex items-center justify-center">
-              <img 
-                src="/logo-arch.png" 
-                alt="AGON Logo" 
+              <img
+                src="/logo-arch.png"
+                alt="AGON Logo"
                 className="h-full w-auto object-contain transform group-hover:scale-105 transition-transform duration-300"
               />
             </div>
@@ -282,33 +281,33 @@ export default function Dashboard() {
 
           {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center gap-10 text-[11px] font-sans font-light tracking-[0.22em] uppercase text-[#8c8985]">
-            <a 
-              href="#arena" 
-              onClick={(e) => handleNavClick(e, "arena")} 
+            <a
+              href="#arena"
+              onClick={(e) => handleNavClick(e, "arena")}
               className="hover:text-white transition-colors relative group/nav"
             >
               Arena
               <span className="absolute bottom-[-4px] left-0 w-0 h-[1px] bg-[#c5a059] group-hover/nav:w-full transition-all duration-300" />
             </a>
-            <a 
-              href="#agents" 
-              onClick={(e) => handleNavClick(e, "agents")} 
+            <a
+              href="#agents"
+              onClick={(e) => handleNavClick(e, "agents")}
               className="hover:text-white transition-colors relative group/nav"
             >
               Combatants
               <span className="absolute bottom-[-4px] left-0 w-0 h-[1px] bg-[#c5a059] group-hover/nav:w-full transition-all duration-300" />
             </a>
-            <a 
-              href="#telemetry" 
-              onClick={(e) => handleNavClick(e, "telemetry")} 
+            <a
+              href="#telemetry"
+              onClick={(e) => handleNavClick(e, "telemetry")}
               className="hover:text-white transition-colors relative group/nav"
             >
               Telemetry
               <span className="absolute bottom-[-4px] left-0 w-0 h-[1px] bg-[#c5a059] group-hover/nav:w-full transition-all duration-300" />
             </a>
-            <a 
-              href="#narrative" 
-              onClick={(e) => handleNavClick(e, "narrative")} 
+            <a
+              href="#narrative"
+              onClick={(e) => handleNavClick(e, "narrative")}
               className="hover:text-white transition-colors relative group/nav"
             >
               System
@@ -320,47 +319,45 @@ export default function Dashboard() {
           <div className="hidden md:block" />
 
           {/* 2-Dash Hamburger Menu for Mobile */}
-          <button 
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="md:hidden flex flex-col justify-center items-center gap-1.5 w-6 h-6 border-0 bg-transparent cursor-pointer z-50 relative"
             aria-label="Toggle Navigation Menu"
           >
-            <span className={`h-[1.5px] w-6 bg-[#ececed] rounded transition-transform duration-300 ${
-              isMobileMenuOpen ? "rotate-45 translate-y-[3.75px]" : ""
-            }`} />
-            <span className={`h-[1.5px] w-6 bg-[#ececed] rounded transition-transform duration-300 ${
-              isMobileMenuOpen ? "-rotate-45 -translate-y-[3.75px]" : ""
-            }`} />
+            <span className={`h-[1.5px] w-6 bg-[#ececed] rounded transition-transform duration-300 ${isMobileMenuOpen ? "rotate-45 translate-y-[3.75px]" : ""
+              }`} />
+            <span className={`h-[1.5px] w-6 bg-[#ececed] rounded transition-transform duration-300 ${isMobileMenuOpen ? "-rotate-45 -translate-y-[3.75px]" : ""
+              }`} />
           </button>
         </div>
 
         {/* Mobile Navigation Drawer */}
         {isMobileMenuOpen && (
           <div className="md:hidden absolute top-full left-0 right-0 bg-[#09090b]/95 backdrop-blur-md border-b border-zinc-800 flex flex-col p-6 space-y-4 text-center font-mono text-[10px] uppercase tracking-[0.2em] animate-fadeIn">
-            <a 
-              href="#arena" 
-              onClick={(e) => { setIsMobileMenuOpen(false); handleNavClick(e, "arena"); }} 
+            <a
+              href="#arena"
+              onClick={(e) => { setIsMobileMenuOpen(false); handleNavClick(e, "arena"); }}
               className="text-[#a19e98] hover:text-white py-2"
             >
               Arena
             </a>
-            <a 
-              href="#agents" 
-              onClick={(e) => { setIsMobileMenuOpen(false); handleNavClick(e, "agents"); }} 
+            <a
+              href="#agents"
+              onClick={(e) => { setIsMobileMenuOpen(false); handleNavClick(e, "agents"); }}
               className="text-[#a19e98] hover:text-white py-2"
             >
               Combatants
             </a>
-            <a 
-              href="#telemetry" 
-              onClick={(e) => { setIsMobileMenuOpen(false); handleNavClick(e, "telemetry"); }} 
+            <a
+              href="#telemetry"
+              onClick={(e) => { setIsMobileMenuOpen(false); handleNavClick(e, "telemetry"); }}
               className="text-[#a19e98] hover:text-white py-2"
             >
               Telemetry
             </a>
-            <a 
-              href="#narrative" 
-              onClick={(e) => { setIsMobileMenuOpen(false); handleNavClick(e, "narrative"); }} 
+            <a
+              href="#narrative"
+              onClick={(e) => { setIsMobileMenuOpen(false); handleNavClick(e, "narrative"); }}
               className="text-[#a19e98] hover:text-white py-2"
             >
               System
@@ -373,7 +370,7 @@ export default function Dashboard() {
       <section className="relative h-screen flex flex-col justify-between overflow-hidden bg-[#09090b]">
         {/* Reverted Backdrop Image & Original Deep Overlay Opacity */}
         <div className="absolute inset-0 z-0">
-          <div 
+          <div
             className="absolute inset-0 bg-cover bg-center opacity-[0.24] mix-blend-luminosity transform scale-100 transition-opacity duration-700 animate-fadeIn"
             style={{ backgroundImage: `url('/colosseum.jpg')` }}
           />
@@ -381,14 +378,14 @@ export default function Dashboard() {
           <div className="absolute inset-0 bg-gradient-to-b from-[#09090b]/60 via-[#09090b]/90 to-[#09090b]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-transparent via-[#09090b]/60 to-[#09090b]" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[750px] h-[550px] rounded-full bg-[#c5a059]/3 blur-[130px]" />
-          
+
           {/* Keyline Arches Backdrop */}
           <div className="absolute inset-0 pointer-events-none opacity-[0.03] flex justify-center items-center" aria-hidden="true">
             <svg
               className="h-[75%] animate-[archPulse_8s_ease-in-out_infinite] text-[#c5a059]"
               viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg"
             >
-              <path d="M100 600V300C100 134.315 234.315 0 400 0C565.685 0 700 134.315 700 300V600" stroke="currentColor" strokeWidth="4" strokeLinecap="round"/>
+              <path d="M100 600V300C100 134.315 234.315 0 400 0C565.685 0 700 134.315 700 300V600" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
             </svg>
           </div>
         </div>
@@ -399,9 +396,9 @@ export default function Dashboard() {
         {/* Center Content with Framer Motion Staggered Animations */}
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 flex flex-col justify-center items-center text-center">
           <div className="max-w-4xl space-y-6">
-            
+
             {/* Title (Scaled down to fit screen properly without overflow) */}
-            <motion.h1 
+            <motion.h1
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
@@ -411,7 +408,7 @@ export default function Dashboard() {
             </motion.h1>
 
             {/* Description (Framer Motion delayed slide-up) */}
-            <motion.p 
+            <motion.p
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
@@ -421,14 +418,14 @@ export default function Dashboard() {
             </motion.p>
 
             {/* CTA Button (Framer Motion delayed slide-up) */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
               className="pt-3"
             >
-              <a 
-                href="#arena" 
+              <a
+                href="#arena"
                 onClick={(e) => handleNavClick(e, "arena")}
                 className="group px-7 py-3.5 bg-gradient-to-r from-[#d4af37] via-[#c5a059] to-[#d4af37] hover:from-[#c5a059] hover:to-[#b38f4d] text-[#0c0c0e] font-bold tracking-widest uppercase rounded-full border border-[#f0e7d5]/35 shadow-[0_0_20px_rgba(197,160,89,0.2)] hover:shadow-[0_0_30px_rgba(197,160,89,0.45)] transform hover:-translate-y-0.5 transition-all duration-300 inline-flex items-center gap-2 cursor-pointer font-mono text-[11px]"
               >
@@ -512,7 +509,7 @@ export default function Dashboard() {
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-            
+
             {/* Spotlight Card (Spans 2 columns) - with Framer Motion hover effects */}
             {spotlightAuction && (
               <div className="lg:col-span-2 space-y-6">
@@ -528,12 +525,11 @@ export default function Dashboard() {
                   const isFlashed = flashItems[`auction-${spotlightAuction.id}`];
 
                   return (
-                    <motion.div 
+                    <motion.div
                       layout
                       whileHover={{ y: -4, transition: { duration: 0.3 } }}
-                      className={`relative flex flex-col justify-between overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950 text-[#fafafa] shadow-md transition-all duration-300 p-6 sm:p-8 space-y-8 ${
-                        isFlashed ? "animate-gold-glow border-[#c5a059] shadow-[0_0_30px_rgba(197,160,89,0.15)]" : ""
-                      }`}
+                      className={`relative flex flex-col justify-between overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950 text-[#fafafa] shadow-md transition-all duration-300 p-6 sm:p-8 space-y-8 ${isFlashed ? "animate-gold-glow border-[#c5a059] shadow-[0_0_30px_rgba(197,160,89,0.15)]" : ""
+                        }`}
                     >
                       {/* Decorative Gold Arch Backdrop */}
                       <div className="absolute top-0 right-0 w-64 h-64 pointer-events-none opacity-5 translate-x-12 -translate-y-12">
@@ -593,7 +589,7 @@ export default function Dashboard() {
                           <span>{Math.round(progressPercent)}% left</span>
                         </div>
                         <div className="h-1.5 w-full bg-zinc-900 rounded-full overflow-hidden">
-                          <div 
+                          <div
                             className="h-full bg-gradient-to-r from-[#b38f4d] via-[#c5a059] to-[#d4c09a] transition-all duration-1000"
                             style={{ width: `${progressPercent}%` }}
                           />
@@ -626,16 +622,15 @@ export default function Dashboard() {
                       const isFlashed = flashItems[`auction-${auction.id}`];
 
                       return (
-                        <motion.div 
+                        <motion.div
                           key={auction.id}
                           layout
                           initial={{ opacity: 0, y: 12 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -12 }}
                           whileHover={{ x: 2, borderLeftColor: "#c5a059" }}
-                          className={`p-5 rounded-xl border border-zinc-800 bg-zinc-950 text-[#fafafa] shadow-sm transition-all duration-200 flex flex-col justify-between space-y-4 border-l-2 border-l-transparent ${
-                            isFlashed ? "animate-gold-glow border-zinc-800 border-l-[#c5a059]" : ""
-                          }`}
+                          className={`p-5 rounded-xl border border-zinc-800 bg-zinc-950 text-[#fafafa] shadow-sm transition-all duration-200 flex flex-col justify-between space-y-4 border-l-2 border-l-transparent ${isFlashed ? "animate-gold-glow border-zinc-800 border-l-[#c5a059]" : ""
+                            }`}
                         >
                           <div className="flex justify-between items-center pb-2 border-b border-zinc-900">
                             <span className="text-[9px] font-sans text-[#c5a059] bg-zinc-900 px-2 py-0.5 rounded border border-zinc-800 tracking-wide">
@@ -667,7 +662,7 @@ export default function Dashboard() {
                           </div>
 
                           <div className="h-1 w-full bg-zinc-900 rounded-full overflow-hidden">
-                            <div 
+                            <div
                               className="h-full bg-gradient-to-r from-[#b38f4d] to-[#c5a059]"
                               style={{ width: `${progressPercent}%` }}
                             />
@@ -697,8 +692,8 @@ export default function Dashboard() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {settledAuctions.slice(0, 6).map(auction => (
-                <motion.div 
-                  key={auction.id} 
+                <motion.div
+                  key={auction.id}
                   whileHover={{ y: -2 }}
                   className="p-4 rounded-xl border border-zinc-800 bg-zinc-950 text-[#fafafa] shadow-sm hover:bg-zinc-900/40 transition-colors flex justify-between items-center"
                 >
@@ -706,7 +701,7 @@ export default function Dashboard() {
                     <p className="font-serif text-sm font-semibold text-white truncate">{auction.itemName}</p>
                     <p className="text-[9px] font-mono text-[#6e6b66] mt-0.5">Auction #{auction.id} · Ended block {auction.endBlock}</p>
                   </div>
-                  
+
                   <div className="text-right shrink-0 ml-4">
                     {auction.hasBids ? (
                       <>
@@ -732,7 +727,7 @@ export default function Dashboard() {
       <section id="agents" className="relative py-20 bg-[#0c0c0e] border-y border-zinc-800">
         <div className="absolute inset-0 opacity-[0.02] bg-cover bg-center" style={{ backgroundImage: `url('/colosseum.jpg')` }} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 relative z-10">
-          
+
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <span className="h-1 w-8 bg-[#c5a059] rounded" />
@@ -746,14 +741,14 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {AGENT_INFO.map(agent => {
               const status = getAgentStatus(agent.name);
-              
+
               // Extract wins / stats from active state
               const statObj = stats.find(s => s.name === agent.name);
               const wins = statObj ? statObj.auctionsWon : 0;
               const bidsPlaced = statObj ? statObj.bidsPlaced : 0;
 
               return (
-                <motion.div 
+                <motion.div
                   key={agent.name}
                   whileHover={{ y: -4 }}
                   className="bg-zinc-950 text-[#fafafa] border border-zinc-800 rounded-xl p-6 flex flex-col justify-between hover:border-[#c5a059]/30 hover:bg-zinc-900/30 transition-all duration-300 group shadow-sm"
@@ -762,8 +757,8 @@ export default function Dashboard() {
                     {/* Header: Avatar + Status */}
                     <div className="flex justify-between items-start">
                       <div className="h-14 w-14 rounded-lg overflow-hidden bg-zinc-900 border border-zinc-800 group-hover:border-[#c5a059]/30 transition-colors">
-                        <img 
-                          src={agent.avatar} 
+                        <img
+                          src={agent.avatar}
                           alt={agent.name}
                           className="h-full w-full object-cover"
                           onError={(e) => {
@@ -834,7 +829,7 @@ export default function Dashboard() {
       {/* 4. LIVE LEADERBOARD + ACTIVITY FEED (Side-by-Side columns) */}
       <section id="telemetry" className="max-w-7xl mx-auto px-4 py-20 sm:px-6 lg:px-8 space-y-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-          
+
           {/* Column Left: Leaderboard stats list */}
           <div className="space-y-6 bg-zinc-950 text-[#fafafa] border border-zinc-800 rounded-xl p-6 sm:p-8 shadow-sm">
             <div className="space-y-2">
@@ -851,41 +846,39 @@ export default function Dashboard() {
               {stats.length === 0 ? (
                 <p className="text-xs text-[#6e6b66] italic">Loading telemetry leaderboard...</p>
               ) : stats.map((agent, index) => {
-                  const isWinner = index === 0;
-                  return (
-                    <motion.div 
-                      key={agent.name} 
-                      whileHover={{ x: 2 }}
-                      className={`p-4 rounded-lg border flex flex-col sm:flex-row justify-between sm:items-center bg-zinc-900/50 transition-all gap-4 ${
-                        isWinner ? "border-[#c5a059]/40 bg-gradient-to-r from-[#1f1a12]/20 to-transparent" : "border-zinc-850"
+                const isWinner = index === 0;
+                return (
+                  <motion.div
+                    key={agent.name}
+                    whileHover={{ x: 2 }}
+                    className={`p-4 rounded-lg border flex flex-col sm:flex-row justify-between sm:items-center bg-zinc-900/50 transition-all gap-4 ${isWinner ? "border-[#c5a059]/40 bg-gradient-to-r from-[#1f1a12]/20 to-transparent" : "border-zinc-850"
                       }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-mono font-bold ${
-                          isWinner ? "bg-[#c5a059] text-black" : "bg-zinc-800 text-[#a19e98]"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-mono font-bold ${isWinner ? "bg-[#c5a059] text-black" : "bg-zinc-800 text-[#a19e98]"
                         }`}>
-                          {index + 1}
-                        </span>
-                        <div>
-                          <p className="text-sm font-bold text-white tracking-wide flex items-center gap-2">
-                            {agent.name}
-                            {isWinner && <Sparkles className="h-3 w-3 text-[#c5a059]" />}
-                          </p>
-                          <p className="text-[9px] font-sans text-[#a19e98] mt-0.5">
-                            {agent.bidsPlaced} Bids Placed · {agent.auctionsWon} Settlements Won
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="text-left sm:text-right shrink-0 border-t sm:border-t-0 border-zinc-900 pt-2 sm:pt-0">
-                        <p className="text-[8px] uppercase font-sans text-[#a19e98]">Bidding Gas Spent</p>
-                        <p className="font-mono text-sm font-bold text-white mt-0.5">
-                          {Number(agent.biddingGasSpent || 0).toLocaleString(undefined, { maximumFractionDigits: 6 })} <span className="text-[10px] font-normal text-[#a19e98]">BOT</span>
+                        {index + 1}
+                      </span>
+                      <div>
+                        <p className="text-sm font-bold text-white tracking-wide flex items-center gap-2">
+                          {agent.name}
+                          {isWinner && <Sparkles className="h-3 w-3 text-[#c5a059]" />}
+                        </p>
+                        <p className="text-[9px] font-sans text-[#a19e98] mt-0.5">
+                          {agent.bidsPlaced} Bids Placed · {agent.auctionsWon} Settlements Won
                         </p>
                       </div>
-                    </motion.div>
-                  );
-                })
+                    </div>
+
+                    <div className="text-left sm:text-right shrink-0 border-t sm:border-t-0 border-zinc-900 pt-2 sm:pt-0">
+                      <p className="text-[8px] uppercase font-sans text-[#a19e98]">Bidding Gas Spent</p>
+                      <p className="font-mono text-sm font-bold text-white mt-0.5">
+                        {Number(agent.biddingGasSpent || 0).toLocaleString(undefined, { maximumFractionDigits: 6 })} <span className="text-[10px] font-normal text-[#a19e98]">BOT</span>
+                      </p>
+                    </div>
+                  </motion.div>
+                );
+              })
               }
             </div>
           </div>
@@ -912,13 +905,12 @@ export default function Dashboard() {
                     const isFlashed = flashItems[key];
 
                     return (
-                      <motion.div 
-                        key={key} 
+                      <motion.div
+                        key={key}
                         initial={{ opacity: 0, x: -12 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className={`p-3 rounded-lg border border-zinc-850 bg-zinc-900/40 flex justify-between items-start gap-3 transition-all duration-300 ${
-                          isFlashed ? "animate-gold-glow border-[#c5a059]" : ""
-                        }`}
+                        className={`p-3 rounded-lg border border-zinc-850 bg-zinc-900/40 flex justify-between items-start gap-3 transition-all duration-300 ${isFlashed ? "animate-gold-glow border-[#c5a059]" : ""
+                          }`}
                       >
                         <div className="min-w-0">
                           <div className="text-xs font-medium text-white flex items-center gap-1.5 flex-wrap">
@@ -927,16 +919,16 @@ export default function Dashboard() {
                             <span className="text-[#a19e98] font-normal">bid on</span>
                             <span className="font-serif text-[#c5a059] truncate font-bold">#{bid.auctionId}</span>
                           </div>
-                          
+
                           <p className="mt-1.5 font-mono text-xs font-black text-white">
                             {formatEthValue(bid.bidAmount)} <span className="text-[9px] font-normal text-[#a19e98]">BOT</span>
                           </p>
                         </div>
 
                         {bid.txHash && (
-                          <a 
+                          <a
                             href={`${BOHR_EXPLORER}/tx/${bid.txHash}`}
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                             className="p-1.5 rounded bg-zinc-900 hover:bg-[#c5a059]/10 border border-zinc-800 text-[#a19e98] hover:text-[#c5a059] transition-all cursor-pointer shrink-0"
                           >
@@ -957,7 +949,7 @@ export default function Dashboard() {
       {/* 5. NARRATIVE & HOW IT WORKS + TECH STACK (Compact section) */}
       <section id="narrative" className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8 border-t border-zinc-800">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          
+
           <div className="space-y-6">
             <div className="flex items-center gap-3">
               <Cpu className="h-5 w-5 text-[#c5a059]" />
@@ -1021,14 +1013,14 @@ export default function Dashboard() {
               A dynamic, real-time autonomous agent economy simulator demonstrating high-frequency micro-auctions and instant settlement logic powered by BOT Chain.
             </p>
           </div>
-          
+
           <div className="space-y-3">
             <h4 className="font-serif font-semibold text-xs text-[#ececed] tracking-wider uppercase">RESOURCES</h4>
             <ul className="space-y-2 text-xs">
               <li>
-                <a 
-                  href={`${BOHR_EXPLORER}/address/${getAgentAddress("CreatorBot")}`} 
-                  target="_blank" 
+                <a
+                  href={`${BOHR_EXPLORER}/address/${getAgentAddress("CreatorBot")}`}
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-[#c5a059] transition-colors flex items-center gap-1.5"
                 >
@@ -1036,9 +1028,9 @@ export default function Dashboard() {
                 </a>
               </li>
               <li>
-                <a 
-                  href={`${BOHR_EXPLORER}/address/0xD9563Dc2888A5872abEa5AfE40971538D26387Ae`} 
-                  target="_blank" 
+                <a
+                  href={`${BOHR_EXPLORER}/address/0xD9563Dc2888A5872abEa5AfE40971538D26387Ae`}
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-[#c5a059] transition-colors flex items-center gap-1.5"
                 >
@@ -1046,9 +1038,9 @@ export default function Dashboard() {
                 </a>
               </li>
               <li>
-                <a 
-                  href="https://faucet.botchain.ai/" 
-                  target="_blank" 
+                <a
+                  href="https://faucet.botchain.ai/"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-[#c5a059] transition-colors flex items-center gap-1.5"
                 >
