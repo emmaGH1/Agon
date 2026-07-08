@@ -77,7 +77,7 @@ app.get('/api/bids', (req, res) => {
 app.get('/api/stats', (req, res) => {
   const state = readState();
   const statsObj = state.agentStats || {};
-  
+
   // Map and sort the leaderboard
   const leaderboard = Object.keys(statsObj).map(name => ({
     name,
@@ -90,7 +90,7 @@ app.get('/api/stats', (req, res) => {
     // Secondary sort by bids placed (descending)
     return (b.bidsPlaced || 0) - (a.bidsPlaced || 0);
   });
-  
+
   res.json(leaderboard);
 });
 
@@ -100,21 +100,21 @@ app.get('/api/metrics', (req, res) => {
   const metrics = state.metrics || {};
   const auctions = state.auctions || [];
   const bids = state.bids || [];
-  
+
   // Real-time calculation using stats database (avoids 50-item bids array cap)
   const totalBids = metrics.totalBids || bids.length;
   const totalAuctionsCreated = metrics.totalAuctionsCreated || auctions.length;
   const settledAuctions = metrics.totalAuctionsSettled || auctions.filter(a => a.settled).length;
-  
+
   const totalGasUsed = Number(metrics.totalGasUsed || 0);
   const totalTransactions = totalBids + totalAuctionsCreated + settledAuctions;
-  
+
   // Dynamic average gas units per transaction
   const avgGasCost = totalTransactions > 0 ? Math.round(totalGasUsed / totalTransactions) : 0;
-  
+
   // Dynamic gas saved unit relative to Ethereum
   const totalGasSaved = totalGasUsed * 150;
-  
+
   let auctionsPerMinute = metrics.auctionsPerMinute || 0;
   if (auctions.length > 1) {
     const timestamps = auctions.map(a => a.timestamp).filter(Boolean);
@@ -127,7 +127,7 @@ app.get('/api/metrics', (req, res) => {
       }
     }
   }
-  
+
   res.json({
     totalAuctionsCreated: totalAuctionsCreated,
     totalAuctionsSettled: settledAuctions,

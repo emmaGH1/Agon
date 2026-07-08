@@ -260,8 +260,8 @@ export default function Dashboard() {
 
       {/* 1. STICKY GLASSMORPHIC NAVBAR (Transitions on scroll) */}
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-          ? "bg-[#09090b]/85 backdrop-blur-md border-b border-zinc-800/80 py-3 shadow-lg"
-          : "bg-transparent border-b border-transparent py-5"
+        ? "bg-[#09090b]/85 backdrop-blur-md border-b border-zinc-800/80 py-3 shadow-lg"
+        : "bg-transparent border-b border-transparent py-5"
         }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center relative">
 
