@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-const STATE_FILE_PATH = path.join(__dirname, '../data/arena-state.json');
+const STATE_FILE_PATH = path.join(process.cwd(), 'data/arena-state.json');
 
 // Default fallback state structure in case of reading issues or missing file
 const defaultState = {
@@ -146,7 +146,7 @@ app.listen(PORT, () => {
 
   // Automatically start the bot runner as a child process (helps when hosting on a single instance like Railway)
   if (process.env.START_BOTS !== 'false') {
-    const botsPath = path.join(__dirname, '../bots/agent-runner.js');
+    const botsPath = path.join(process.cwd(), 'bots/agent-runner.js');
     console.log(`[Server] Starting agent runner child process: ${botsPath}`);
     const botsProcess = spawn('node', [botsPath], {
       stdio: 'inherit',
