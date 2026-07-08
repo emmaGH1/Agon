@@ -285,7 +285,7 @@ async function attemptConservativeSnipe(id, auction) {
   if (alreadyWinning) return;
 
   auction.conservativeBidPending = true; // Lock while tx is in-flight
-  const delay = Math.random() * 150 + 50; // Fast response: 50–200ms
+  const delay = Math.random() * 4000 + 2000; // Slowed: 2–6 seconds response
   setTimeout(async () => {
     try {
       // Fetch absolute latest state directly from the blockchain to avoid racing issues
@@ -431,52 +431,54 @@ function triggerReactions(auctionId, currentHighestBid, isFirstBid, currentBidde
   // Aggressive Bot reaction
   const aggressiveBot = botConfigs[1];
   if (aggressiveBot.wallet.address.toLowerCase() !== currentBidderAddress.toLowerCase()) {
-    // On first bid: bid startingPrice + 15%; on reaction: outbid current by 15%
-    const nextBid = isFirstBid
-      ? (BigInt(currentHighestBid) * 115n) / 100n
-      : (BigInt(currentHighestBid) * 115n) / 100n;
-    if (nextBid <= aggressiveBot.budget) {
-      const delay = Math.random() * 300 + 200; // Tightened: 200–500ms for high-frequency bidding
-      setTimeout(() => {
-        const currentAuction = activeAuctions.get(auctionId);
-        if (currentAuction && !currentAuction.settled) {
-          placeBotBid(aggressiveBot, auctionId, nextBid);
-        }
-      }, delay);
+    // 35% chance to bid to prevent continuous bidding wars and conserve gas
+    if (Math.random() < 0.35) {
+      const nextBid = (BigInt(currentHighestBid) * 115n) / 100n;
+      if (nextBid <= aggressiveBot.budget) {
+        const delay = Math.random() * 8000 + 4000; // Slowed: 4-12 seconds
+        setTimeout(() => {
+          const currentAuction = activeAuctions.get(auctionId);
+          if (currentAuction && !currentAuction.settled) {
+            placeBotBid(aggressiveBot, auctionId, nextBid);
+          }
+        }, delay);
+      }
     }
   }
 
   // Random Bot reaction
   const randomBot = botConfigs[3];
   if (randomBot.wallet.address.toLowerCase() !== currentBidderAddress.toLowerCase()) {
-    // Random increment: 5%–15% above current, but on first bid use 25% so it always beats Aggressive's opening bid
-    const incrementPct = isFirstBid
-      ? 125n // first bid: startingPrice * 1.25 — ensures RandomBot's opening > AggressiveBot's opening
-      : (100n + BigInt(Math.floor(Math.random() * 10) + 5)); // 105% – 115%
-    const nextBid = (BigInt(currentHighestBid) * incrementPct) / 100n;
-    if (nextBid <= randomBot.budget) {
-      const delay = Math.random() * 1000 + 500; // Tightened: 500–1500ms
-      setTimeout(() => {
-        const currentAuction = activeAuctions.get(auctionId);
-        if (currentAuction && !currentAuction.settled) {
-          placeBotBid(randomBot, auctionId, nextBid);
-        }
-      }, delay);
+    // 35% chance to bid to prevent continuous bidding wars and conserve gas
+    if (Math.random() < 0.35) {
+      const incrementPct = isFirstBid
+        ? 125n // first bid: startingPrice * 1.25 — ensures RandomBot's opening > AggressiveBot's opening
+        : (100n + BigInt(Math.floor(Math.random() * 10) + 5)); // 105% – 115%
+      const nextBid = (BigInt(currentHighestBid) * incrementPct) / 100n;
+      if (nextBid <= randomBot.budget) {
+        const delay = Math.random() * 12000 + 8000; // Slowed: 8-20 seconds
+        setTimeout(() => {
+          const currentAuction = activeAuctions.get(auctionId);
+          if (currentAuction && !currentAuction.settled) {
+            placeBotBid(randomBot, auctionId, nextBid);
+          }
+        }, delay);
+      }
     }
   }
 }
 
 /**
  * Periodic Auction Creator (to keep the demo alive)
- * CreatorBot will create a new micro-auction every 30 seconds if there are fewer than 2 active auctions.
+ * CreatorBot will create a new micro-auction every 3 minutes if there are no active auctions.
  */
 async function runDemoCreator() {
   const creator = botConfigs[0];
   setInterval(async () => {
-    if (activeAuctions.size < 2) {
+    if (activeAuctions.size < 1) {
       const randomItems = ["Holographic Sticker", "AI Processor Unit", "Cybernetic Upgrade", "Quantum Core", "Neural Link Module"];
       const itemName = randomItems[Math.floor(Math.random() * randomItems.length)] + " #" + Math.floor(Math.random() * 1000);
-      const duration = 80; // ~60 seconds (80 blocks at ~0.75s per block)
+      const duration = 400; // ~5 minutes (400 blocks at ~0.75s per block)
       const startingPrice = parseEther("0.01");
       
       console.log(`[Demo Orchestration] CreatorBot creating new auction: "${itemName}"...`);
@@ -490,7 +492,7 @@ async function runDemoCreator() {
         console.error("[Demo Orchestration] Failed to create new demo auction:", err.message);
       }
     }
-  }, 25000);
+  }, 180000);
 }
 
 
