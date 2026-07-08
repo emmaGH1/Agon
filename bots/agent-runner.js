@@ -188,10 +188,27 @@ async function placeBotBid(botConfig, auctionId, bidAmount) {
  * Checks all active auctions and settles them if they reached their end block.
  */
 async function checkAndSettleAuctions(currentBlock) {
+  const settler = botConfigs[0];
+  let settlerBalance;
+  try {
+    settlerBalance = await provider.getBalance(settler.wallet.address);
+  } catch (err) {
+    console.warn("[Settler Check] Failed to query CreatorBot balance:", err.message);
+    return;
+  }
+
+  const safetyThreshold = parseEther("0.05");
+  if (settlerBalance < safetyThreshold) {
+    // Only warn once in a while or when active auctions are waiting to avoid log flooding
+    if (activeAuctions.size > 0) {
+      console.warn(`[WARNING] CreatorBot balance is low (${formatEther(settlerBalance)} BOT), below safety threshold of 0.05 BOT. Pausing settlement of ${activeAuctions.size} active auction(s) to avoid out-of-gas errors.`);
+    }
+    return;
+  }
+
   for (const [id, auction] of activeAuctions.entries()) {
     if (currentBlock >= auction.endBlock && !auction.settled && !auction.settlingInProgress) {
       auction.settlingInProgress = true;
-      const settler = botConfigs[0]; // Let CreatorBot settle the auctions
       console.log(`[Settler Node] Auction ${id} ("${auction.itemName}") ended at block ${auction.endBlock} (current block ${currentBlock}). Settling via ${settler.name}...`);
       
       try {
@@ -217,7 +234,21 @@ async function checkAndSettleAuctions(currentBlock) {
         activeAuctions.delete(id);
       } catch (err) {
         console.error(`[Settler Failed] Error settling auction ${id}:`, err.message);
-        auction.settlingInProgress = false;
+        if (err.message.includes("Auction already settled") || err.message.includes("already settled")) {
+          console.log(`[Settler Info] Auction ${id} was already settled on-chain. Removing from active tracking.`);
+          // Immediately mark settled in local memory and fileState database so the UI reflects it instantly
+          const idx = fileState.auctions.findIndex(a => a.id === id);
+          if (idx >= 0) {
+            if (!fileState.auctions[idx].settled) {
+              fileState.auctions[idx].settled = true;
+              fileState.metrics.totalAuctionsSettled++;
+            }
+          }
+          writeStateToFile();
+          activeAuctions.delete(id);
+        } else {
+          auction.settlingInProgress = false;
+        }
       }
     }
   }
@@ -476,6 +507,18 @@ async function runDemoCreator() {
   const creator = botConfigs[0];
   setInterval(async () => {
     if (activeAuctions.size < 1) {
+      // Safety check: skip creation if balance is below safety threshold
+      try {
+        const creatorBalance = await provider.getBalance(creator.wallet.address);
+        if (creatorBalance < parseEther("0.05")) {
+          console.warn(`[WARNING] CreatorBot balance is too low (${formatEther(creatorBalance)} BOT) to create new auctions. Safety threshold is 0.05 BOT.`);
+          return;
+        }
+      } catch (err) {
+        console.warn("[Demo Orchestration] Failed to check CreatorBot balance before creation:", err.message);
+        return;
+      }
+
       const randomItems = ["Holographic Sticker", "AI Processor Unit", "Cybernetic Upgrade", "Quantum Core", "Neural Link Module"];
       const itemName = randomItems[Math.floor(Math.random() * randomItems.length)] + " #" + Math.floor(Math.random() * 1000);
       const duration = 400; // ~5 minutes (400 blocks at ~0.75s per block)
@@ -506,13 +549,13 @@ async function checkAndFundWallets() {
       const bot = botConfigs[i];
       const balance = await provider.getBalance(bot.wallet.address);
       
-      // If child wallet has less than 0.08 BOT and CreatorBot has at least 0.25 BOT
-      if (balance < parseEther("0.08") && creatorBalance > parseEther("0.25")) {
-        console.log(`[Self-Funding] ${bot.name} balance is low (${formatEther(balance)} BOT). Transferring 0.15 BOT from CreatorBot...`);
+      // If child wallet has less than 0.01 BOT and CreatorBot has at least 0.05 BOT
+      if (balance < parseEther("0.01") && creatorBalance > parseEther("0.05")) {
+        console.log(`[Self-Funding] ${bot.name} balance is low (${formatEther(balance)} BOT). Transferring 0.02 BOT from CreatorBot...`);
         try {
           const tx = await creator.wallet.sendTransaction({
             to: bot.wallet.address,
-            value: parseEther("0.15"),
+            value: parseEther("0.02"),
             gasLimit: 21000
           });
           await tx.wait();
