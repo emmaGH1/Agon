@@ -1,0 +1,41 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "C:\\Users\\Emma0\\OneDrive\\Documents\\GitHub\\Agent Bid Arena\\contracts\\AgentBidArena.sol": {
+      "lastModificationDate": 1783482772030,
+      "contentHash": "836995e7059da883fe5017caf45b2ff2",
+      "sourceName": "contracts/AgentBidArena.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.8.24"
+      ],
+      "artifacts": [
+        "AgentBidArena"
+      ]
+    }
+  }
+}

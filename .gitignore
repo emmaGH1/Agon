@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+
+# Next.js build output
+frontend/.next/
+frontend/out/
+
+# Environment files
+.env
+.env.local
+.env.production
+frontend/.env
+frontend/.env.local
+
+# Agent private key / mnemonic (NEVER commit)
+.env.bot
+bots/.env
+
+# Logs
+*.log
+logs/
+
+# Data state (runtime generated, large)
+data/arena-state.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/

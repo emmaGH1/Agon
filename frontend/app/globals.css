@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-space-grotesk), "Oregon", sans-serif;
+  --font-serif: "Northwest", var(--font-cinzel), serif;
+  --font-mono: var(--font-roboto-mono);
+
+  --animate-gold-glow: goldGlow 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-victory-pulse: victoryPulse 2s infinite alternate;
+  --animate-archPulse: archPulse 8s ease-in-out infinite;
+  --animate-fadeInUp: fadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-fadeIn: fadeIn 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes goldGlow {
+  0% {
+    box-shadow: 0 0 0 0px rgba(212, 175, 55, 0.7);
+    border-color: rgba(212, 175, 55, 0.9);
+    background-color: rgba(212, 175, 55, 0.08);
+  }
+  100% {
+    box-shadow: 0 0 0 16px rgba(212, 175, 55, 0);
+    border-color: rgba(212, 175, 55, 0.15);
+    background-color: transparent;
+  }
+}
+
+@keyframes victoryPulse {
+  0% {
+    filter: drop-shadow(0 0 1px rgba(212, 175, 55, 0.15));
+  }
+  100% {
+    filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.5));
+  }
+}
+
+@keyframes archPulse {
+  0%, 100% {
+    opacity: 0.06;
+    transform: scaleY(1) translateY(0px);
+  }
+  50% {
+    opacity: 0.10;
+    transform: scaleY(1.012) translateY(-4px);
+  }
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+:root {
+  --background: #09090b;
+  --foreground: #fafafa;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+/* Custom scrollbars for a premium UI feel */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #09090b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #c5a059;
+}
+
+/* Arch card-clip utility to give that Roman arena atmosphere */
+.arch-clip {
+  border-top-left-radius: 40px;
+  border-top-right-radius: 40px;
+}
