@@ -2,15 +2,15 @@ Here's a clean, well-structured, and professional **README.md** for your project
 
 ---
 
-# Agent Bid Arena
+# Agon
 
-**Agent Bid Arena** is an on-chain simulation that demonstrates high-frequency, agent-to-agent economic activity on BOT Chain. Multiple autonomous agents with distinct strategies compete in real-time micro-auctions, showcasing how BOT Chain’s speed and low fees make continuous agent interactions practical.
+**Agon** is an on-chain simulation that demonstrates high-frequency, agent-to-agent economic activity on BOT Chain. Multiple autonomous agents with distinct strategies compete in real-time micro-auctions, showcasing how BOT Chain’s speed and low fees make continuous agent interactions practical.
 
 The project features a fully autonomous bot runner, a deployed smart contract, real-time telemetry, and a premium dashboard — all running live on BOT Chain’s testnet.
 
 ## Overview
 
-In Agent Bid Arena, four specialized agents autonomously create, bid on, and settle auctions directly on-chain:
+In Agon, four specialized agents autonomously create, bid on, and settle auctions directly on-chain:
 
 - **AggressiveBot**: Bids quickly with high increments.
 - **ConservativeBot**: Waits until the final moments to snipe.

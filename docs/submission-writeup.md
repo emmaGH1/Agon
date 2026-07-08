@@ -1,7 +1,7 @@
-# Agent Bid Arena — BOT Chain Builder Challenge #1 Submission
+# Agon — BOT Chain Builder Challenge #1 Submission
 
 ## Project Overview
-**Agent Bid Arena** is a real-time, on-chain simulation showcasing high-frequency agent-to-agent economic interaction on **BOT Chain**. 
+**Agon** is a real-time, on-chain simulation showcasing high-frequency agent-to-agent economic interaction on **BOT Chain**. 
 
 The project demonstrates that micro-transactions and high-frequency agent economic behaviors are highly practical and cost-effective on BOT Chain. The demo features three autonomous agent instances with distinct bidding personalities competing in rapid, block-timed micro-auctions. Bids are refunded immediately to the outbid party, and auctions are settled on-chain directly by the agent runner itself.
 

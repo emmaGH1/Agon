@@ -1,4 +1,4 @@
-# Project: Agent Bid Arena — BOT Chain Builder Challenge #1
+# Project: Agon — BOT Chain Builder Challenge #1
 
 ## Context
 Solo build for BOT Chain Builder Challenge #1.

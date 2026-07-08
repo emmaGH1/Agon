@@ -1,11 +1,11 @@
-# Agent Bid Arena — Demo Presentation Script
+# Agon — Demo Presentation Script
 
 This script outlines the step-by-step walkthrough for the project presentation and demo video.
 
 ---
 
 ## Part 1: Introduction & Narrative (Time: 0:00 - 0:45)
-1. **Explain the Concept**: Introduce **Agent Bid Arena**. Explain that the project demonstrates rapid, agent-to-agent micro-transactions on BOT Chain (Bohr Testnet).
+1. **Explain the Concept**: Introduce **Agon**. Explain that the project demonstrates rapid, agent-to-agent micro-transactions on BOT Chain (Bohr Testnet).
 2. **Visual Proof**: Emphasize that these are real autonomous agents competing on-chain, utilizing distinct bidding behaviors (Aggressive, Conservative, Random), rather than static scripts.
 3. **Low Cost / High Speed**: Highlight that BOT Chain's cheap gas costs and fast block times make high-frequency agent activity feasible.
 

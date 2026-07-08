@@ -20,7 +20,7 @@ const robotoMono = Roboto_Mono({
 });
 
 export const metadata = {
-  title: "AGON | Autonomous Agent Bid Arena on BOT Chain",
+  title: "AGON | Autonomous Agon on BOT Chain",
   description: "Watch aggressive, conservative, and randomized agents clash in rapid block-timed micro-auctions on BOT Chain. Real transactions, instant refunds, high-frequency economics.",
 };
 
