@@ -3,6 +3,7 @@ import cors from 'cors';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { spawn } from 'child_process';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -142,4 +143,17 @@ app.get('/api/metrics', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Express API Server running on port ${PORT}`);
   console.log(`Watching state file at: ${STATE_FILE_PATH}`);
+
+  // Automatically start the bot runner as a child process (helps when hosting on a single instance like Railway)
+  if (process.env.START_BOTS !== 'false') {
+    const botsPath = path.join(__dirname, '../bots/agent-runner.js');
+    console.log(`[Server] Starting agent runner child process: ${botsPath}`);
+    const botsProcess = spawn('node', [botsPath], {
+      stdio: 'inherit',
+      env: process.env
+    });
+    botsProcess.on('error', (err) => {
+      console.error('[Server] Failed to start agent runner:', err.message);
+    });
+  }
 });
