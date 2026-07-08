@@ -20,8 +20,8 @@ import {
   Play
 } from "lucide-react";
 
-// API endpoints pointing to localhost Express backend
-const API_BASE = "https://agon-server.up.railway.app";
+// API endpoints pointing to the hosted Express backend (supports local override via environment variable)
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://agon-server.up.railway.app/api";
 const BOHR_RPC = "https://rpc.bohr.life";
 const BOHR_EXPLORER = "https://scan.bohr.life";
 
@@ -145,7 +145,7 @@ export default function Dashboard() {
 
     } catch (err) {
       console.error("Dashboard polling error:", err);
-      setError("Failed to fetch telemetry data. Please ensure the Express server is running on port 3001.");
+      setError(`Failed to fetch telemetry data. Please ensure the backend server is running and accessible at: ${API_BASE}`);
       setLoading(false);
     }
   };
