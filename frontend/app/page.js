@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 
 // API endpoints pointing to localhost Express backend
-const API_BASE = process.env.API_BASE;
+const API_BASE = "https://agon-server.up.railway.app";
 const BOHR_RPC = "https://rpc.bohr.life";
 const BOHR_EXPLORER = "https://scan.bohr.life";
 
