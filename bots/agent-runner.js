@@ -91,6 +91,20 @@ if (fs.existsSync(STATE_FILE_PATH)) {
     const raw = fs.readFileSync(STATE_FILE_PATH, "utf8");
     if (raw.trim()) {
       fileState = JSON.parse(raw);
+      // Prune on load so we start with a clean state immediately
+      if (Array.isArray(fileState.auctions)) {
+        const active = [];
+        const settled = [];
+        for (const a of fileState.auctions) {
+          if (a && a.settled) {
+            settled.push(a);
+          } else if (a) {
+            active.push(a);
+          }
+        }
+        const recentSettled = settled.slice(-100);
+        fileState.auctions = [...active, ...recentSettled].sort((a, b) => (a.id || 0) - (b.id || 0));
+      }
     }
   } catch (err) {
     console.warn("Could not parse existing state file, overwriting. Reason:", err.message);
@@ -123,12 +137,31 @@ botConfigs.forEach(b => {
   }
 });
 
+// Write pruned state immediately back to disk
+writeStateToFile();
+
 function writeStateToFile() {
   try {
     const dir = path.dirname(STATE_FILE_PATH);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
+
+    // Prune auctions to keep file size small
+    if (Array.isArray(fileState.auctions)) {
+      const active = [];
+      const settled = [];
+      for (const a of fileState.auctions) {
+        if (a && a.settled) {
+          settled.push(a);
+        } else if (a) {
+          active.push(a);
+        }
+      }
+      const recentSettled = settled.slice(-100);
+      fileState.auctions = [...active, ...recentSettled].sort((a, b) => (a.id || 0) - (b.id || 0));
+    }
+
     fs.writeFileSync(STATE_FILE_PATH, JSON.stringify(fileState, null, 2), "utf8");
   } catch (err) {
     console.error("Error writing state to file:", err.message);

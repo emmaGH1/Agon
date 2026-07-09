@@ -21,7 +21,14 @@ import {
 } from "lucide-react";
 
 // API endpoints pointing to the hosted Express backend (supports local override via environment variable)
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://agon-server.up.railway.app/api";
+const getApiBase = () => {
+  if (typeof window !== "undefined") {
+    if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+      return "http://localhost:3001/api";
+    }
+  }
+  return process.env.NEXT_PUBLIC_API_URL || "https://agon-server.up.railway.app/api";
+};
 const BOHR_RPC = "https://rpc.bohr.life";
 const BOHR_EXPLORER = "https://scan.bohr.life";
 
@@ -105,6 +112,7 @@ export default function Dashboard() {
 
   // Fetch data from Bohr RPC and Express API
   const fetchData = async () => {
+    const API_BASE = getApiBase();
     try {
       // Fetch current block directly from Bohr Testnet RPC
       const rpcRes = await fetch(BOHR_RPC, {
@@ -254,6 +262,42 @@ export default function Dashboard() {
 
     return { text: "WAITING", color: "text-[#a19e98] border-zinc-800 bg-zinc-900/5" };
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#09090b] flex flex-col items-center justify-center text-[#ececed] font-sans antialiased selection:bg-[#c5a059] selection:text-black">
+        <div className="relative flex flex-col items-center gap-8">
+          {/* Premium spinning ring loader */}
+          <div className="relative w-24 h-24">
+            <div className="absolute inset-0 rounded-full border-4 border-zinc-900" />
+            <div className="absolute inset-0 rounded-full border-4 border-t-[#c5a059] border-r-[#c5a059]/40 border-b-transparent border-l-transparent animate-spin" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <img
+                src="/logo-arch.png"
+                alt="AGON Logo"
+                className="h-12 w-auto object-contain animate-pulse"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                }}
+              />
+            </div>
+          </div>
+          
+          <div className="text-center space-y-3">
+            <h1 className="font-serif font-black text-3xl tracking-[0.3em] text-white uppercase animate-pulse">
+              AGON
+            </h1>
+            <div className="flex items-center justify-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-[#c5a059] animate-ping" />
+              <p className="text-[11px] font-mono tracking-[0.25em] text-[#8c8985] uppercase">
+                Initializing Arena Telemetry...
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#09090b] text-[#ececed] font-sans antialiased selection:bg-[#c5a059] selection:text-black">
