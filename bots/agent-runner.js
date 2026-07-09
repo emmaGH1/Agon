@@ -133,6 +133,20 @@ function writeStateToFile() {
   } catch (err) {
     console.error("Error writing state to file:", err.message);
   }
+
+  // Synchronize state with remote server via HTTP POST if API_URL or SERVER_URL is provided (supports separate container services)
+  const serverUrl = process.env.API_URL || process.env.SERVER_URL;
+  if (serverUrl) {
+    // Normalize url: strip trailing slash
+    const base = serverUrl.endsWith('/') ? serverUrl.slice(0, -1) : serverUrl;
+    fetch(`${base}/api/state`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(fileState)
+    }).catch(err => {
+      console.warn("[State Sync] Failed to sync state to remote server:", err.message);
+    });
+  }
 }
 
 // Track gas spent in agent stats

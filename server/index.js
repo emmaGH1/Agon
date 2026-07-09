@@ -140,6 +140,21 @@ app.get('/api/metrics', (req, res) => {
   });
 });
 
+// 5. POST /api/state: Receive state updates from remote bot runner instances
+app.post('/api/state', (req, res) => {
+  if (req.body) {
+    lastValidState = req.body;
+    // Persist locally too so it survives server restarts if storage persists
+    try {
+      fs.writeFileSync(STATE_FILE_PATH, JSON.stringify(req.body, null, 2), 'utf8');
+    } catch (err) {
+      console.error('[Server] Error saving posted state locally:', err.message);
+    }
+    return res.json({ success: true });
+  }
+  res.status(400).json({ error: 'Invalid state body' });
+});
+
 app.listen(PORT, () => {
   console.log(`Express API Server running on port ${PORT}`);
   console.log(`Watching state file at: ${STATE_FILE_PATH}`);
@@ -147,13 +162,17 @@ app.listen(PORT, () => {
   // Automatically start the bot runner as a child process (helps when hosting on a single instance like Railway)
   if (process.env.START_BOTS !== 'false') {
     const botsPath = path.join(process.cwd(), 'bots/agent-runner.js');
-    console.log(`[Server] Starting agent runner child process: ${botsPath}`);
-    const botsProcess = spawn('node', [botsPath], {
-      stdio: 'inherit',
-      env: process.env
-    });
-    botsProcess.on('error', (err) => {
-      console.error('[Server] Failed to start agent runner:', err.message);
-    });
+    if (fs.existsSync(botsPath)) {
+      console.log(`[Server] Starting agent runner child process: ${botsPath}`);
+      const botsProcess = spawn('node', [botsPath], {
+        stdio: 'inherit',
+        env: process.env
+      });
+      botsProcess.on('error', (err) => {
+        console.error('[Server] Failed to start agent runner:', err.message);
+      });
+    } else {
+      console.log(`[Server] Agent runner file not found at ${botsPath}. Skipping auto-spawn. (Assuming bots are running in a separate service/process)`);
+    }
   }
 });
