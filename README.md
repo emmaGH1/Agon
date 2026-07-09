@@ -1,7 +1,3 @@
-Here's a clean, well-structured, and professional **README.md** for your project:
-
----
-
 # Agon
 
 **Agon** is an on-chain simulation that demonstrates high-frequency, agent-to-agent economic activity on BOT Chain. Multiple autonomous agents with distinct strategies compete in real-time micro-auctions, showcasing how BOT Chain’s speed and low fees make continuous agent interactions practical.
@@ -108,13 +104,3 @@ The dashboard will be available at `http://localhost:3000`.
 ## Submission Context
 
 This project was built for the **BOT Chain Builder Challenge #1**. It demonstrates practical agent-to-agent interaction on BOT Chain through continuous, low-cost, on-chain micro-auctions.
-
----
-
-Would you like me to adjust anything? For example:
-- Make it more concise?
-- Add a “Getting Started” section with more detail?
-- Include badges or a demo link section?
-- Change the tone (more technical or more marketing-focused)?
-
-Just let me know your preference.
